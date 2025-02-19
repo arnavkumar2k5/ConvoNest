@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
 import { FaPlus, FaTrash } from "react-icons/fa";
@@ -10,21 +10,15 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { logout } from "@/store/authSlice";
+import { login, logout } from "@/store/authSlice";
 
 function Profile() {
   const navigate = useNavigate();
-  const userInfo = useSelector((state) => state.auth.userData?.data);
-  console.log("bete yeh dekh", userInfo);
-  const accessToken = userInfo?.accessToken;
 
-  const decodedUserInfo = accessToken ? jwtDecode(accessToken) : null;
-  console.log("Decoded User Info:", decodedUserInfo);
-
-  const [fullName, setFullName] = useState(decodedUserInfo?.fullName || "");
-  const [email, setEmail] = useState(decodedUserInfo?.email || "");
-  const [username, setUsername] = useState(decodedUserInfo?.username || "");
-  const [image, setImage] = useState(decodedUserInfo?.image || "");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [image, setImage] = useState("");
   const [hovered, setHovered] = useState(false);
   const [selectedColor, setSelectedColor] = useState(0);
 
@@ -32,6 +26,33 @@ function Profile() {
 
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await axios.get("/api/v1/users/me", {
+          withCredentials: true,
+        });
+        console.log("bhaiya aa gaya:- ", response.data.data);
+
+        if (response.status === 200 && response.data.data) {
+          const { fullName, email, username, image } = response.data.data;
+  
+          setFullName(fullName || "");
+          setEmail(email || "");
+          setUsername(username || "");
+          setImage(image || "");
+
+          dispatch(login({userData: response.data.data}))
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+  
+    getUser();
+  }, []);
+  
 
   const saveChanges = async () => {
     try {
@@ -44,7 +65,7 @@ function Profile() {
       if (response.status === 200 && response.data) {
         dispatch(logout());
         console.log("Profile Updated Successfully");
-        navigate("/");
+        navigate("/chat");
       }
     } catch (error) {
       console.log("Error in Updating Profile: ", error);

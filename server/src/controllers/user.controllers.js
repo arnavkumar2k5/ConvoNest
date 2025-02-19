@@ -36,13 +36,15 @@ const registerUser = asyncHandler( async(req, res) => {
         throw new ApiError(409, "User with email or username already exists")
     }
 
-
     const user = await User.create({
         fullName,
         email,
         password,
         username: username.toLowerCase()
     })
+
+    // Generate tokens after user creation
+    const {accessToken, refreshToken} = await generateAcccessAndRefreshTokens(user._id)
 
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
@@ -52,9 +54,24 @@ const registerUser = asyncHandler( async(req, res) => {
         throw new ApiError(500, "Something Went Wrong While Registring the User")
     }
 
-    return res.status(201).json(
-        new ApiResponse(200, createdUser, "User registered Successfully")
-    )
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(201)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(200, 
+                {
+                    accessToken,
+                    refreshToken
+                }, 
+                "User registered Successfully"
+            )
+        )
 })
 
 const loginUser = asyncHandler( async(req, res) => {

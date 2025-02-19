@@ -6,23 +6,46 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getColor } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {IoMdLogOut} from "react-icons/io"
 import { logout } from "@/store/authSlice";
+import axios from "axios";
 
 function ProfileInfo() {
-  const userInfo = useSelector((state) => state.auth.userData?.data?.user);
-  const [fullName, setFullName] = useState(userInfo?.fullName || "");
-  const [email, setEmail] = useState(userInfo?.email || "");
-  const [image, setImage] = useState(userInfo?.image || "");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [image, setImage] = useState("");
   const [selectedColor, setSelectedColor] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch()
 
-  console.log("bhaiya yeh dekho:- ", userInfo)
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await axios.get("/api/v1/users/me", {
+          withCredentials: true,
+        });
+        console.log("bhaiya aa gaya:- ", response.data.data);
+
+        if (response.status === 200 && response.data.data) {
+          const { fullName, email, username, image } = response.data.data;
+  
+          setFullName(fullName || "");
+          setEmail(email || "");
+          setUsername(username || "");
+          setImage(image || "");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+  
+    getUser();
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());

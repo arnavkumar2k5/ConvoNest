@@ -62,9 +62,8 @@ function Auth() {
             );
             setMessage(response.data.message || "User registered successfully!");
             dispatch(login({userData: response.data}))
-            navigate("/")
+            navigate("/profile")
             console.log("Response Data: ", response.data);
-        alert("Please Login to Enter")
     } catch (error) {
         setMessage(
             error.response?.data?.message || "An Error Occured during registration"
