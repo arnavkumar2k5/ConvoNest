@@ -5,6 +5,9 @@ import {User} from "../models/user.model.js"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
+import { renameSync, unlinkSync } from "fs"
+import fs from "fs";
+
 
 const generateAcccessAndRefreshTokens = async(userId) => {
     try {
@@ -182,35 +185,31 @@ const updateUser = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, user, "Account Details updated Successfully"))
 })
 
-const updateUserAvatar = asyncHandler(async(req, res) => {
-    const avatarLocalPath = req.file?.path;
+const updateUserAvatar = async (request,response,next) =>{
+    try {
+      if(!request.file){
+        return response.status(400).send("File is required");
+      }
+      const date = Date.now();
+      let fileName = "public/temp/" + date + request.file.originalname;
+      renameSync(request.file.path, fileName);
 
-    if(!avatarLocalPath){
-        throw new ApiError(400, "Avatar file is missing");
+      const cleanPath = fileName.replace("public/", "");
+
+      const updatedUser = await User.findByIdAndUpdate(
+        request.userId,
+        {image: cleanPath},
+        {new:true, runValidators:true}
+      )
+      return response.status(200).json({
+            image: updatedUser.image,
+      })
+    } catch (error) {
+      console.log({error});
+      return response.status(500).send("Internal Server ERROR")
     }
+}
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-
-    if(!avatar.url){
-        throw new ApiError(400, "Error while uploading avatar");
-    }
-
-    const user = await User.findByIdAndUpdate(
-        req.user?.id,
-        {
-            $set: {
-                avatar: avatar.url,
-            },
-        },
-        {
-            new: true
-        }
-    ).select("-password")
-
-    return res
-    .status(200)
-    .json(new ApiResponse(200, user, "Avatar updated Succesfully"))
-})
 
 const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).select("-password -refreshToken");
@@ -222,6 +221,31 @@ const getUserProfile = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, user, "User profile fetched successfully"));
 });
 
+const removeProfileImage = async (request, response, next) => {
+    try {
+      const { userId } = request;
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return response.status(404).send("User not found");
+      }
+  
+      if (user.image) {
+        const filePath = `public/${user.image}`; // Adjust based on your storage logic
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      }
+  
+      user.image = null;
+      await user.save();
+  
+      return response.status(200).send("Profile Image removed Successfully");
+    } catch (error) {
+      console.log({ error });
+      return response.status(500).send("Internal Server ERROR");
+    }
+  };
 
 
-export {registerUser, loginUser, logoutUser, allUsers, updateUser, getUserProfile, updateUserAvatar}
+export {registerUser, loginUser, logoutUser, allUsers, updateUser, getUserProfile, updateUserAvatar, removeProfileImage}

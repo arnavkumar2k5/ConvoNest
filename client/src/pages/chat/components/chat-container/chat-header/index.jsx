@@ -12,7 +12,7 @@ function ChatHeader() {
   const dispatch = useDispatch();
 
   return (
-    <div className="flex items-center justify-between px-5 gap-5 w-full h-[10vh] bg-[#2a2b33]">
+    <div className="flex items-center justify-between px-5 gap-5 w-full h-[11.5vh] bg-[#EFF6FC] text-black">
       {
         selectedChataType === "contact" ? 
       <Avatar className="h-12 w-12 rounded-full overflow-hidden">
@@ -41,8 +41,8 @@ function ChatHeader() {
         }
         {
           selectedChataType === "contact" &&  <div>
-            {selectedChataData.fullName}
-            <span>{selectedChataData.username}</span>
+            {selectedChataData.fullName} 
+            <span className="text-sm lowercase"> ({selectedChataData.username})</span>
           </div>
         }
       </div>

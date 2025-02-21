@@ -10,6 +10,7 @@ import { Toaster } from './components/ui/sonner'
 import { Provider } from 'react-redux'
 import store from './store/store'
 import { SocketProvider } from './context/SocketContext'
+import Landing from './pages/Landing'
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        element: <Landing/>
+      },
+      {
+        path: "/auth",
         element: <Auth/>
       },
       {
@@ -36,6 +41,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
   <Provider store={store}>
     <SocketProvider>
+    <Toaster position="top-right" reverseOrder={false} />
     <RouterProvider router={router}/>
     </SocketProvider>
   </Provider>

@@ -56,21 +56,42 @@ function Profile() {
 
   const saveChanges = async () => {
     try {
-      const response = await axios.patch(
-        "/api/v1/users/update-account",
-        { fullName, username },
-        { withCredentials: true }
-      );
+        const response = await axios.patch(
+            "/api/v1/users/update-account",
+            { fullName, username },
+            { withCredentials: true }
+        );
 
-      if (response.status === 200 && response.data) {
-        dispatch(logout());
-        console.log("Profile Updated Successfully");
+        if (response.status === 200) {
+            // Get fresh user data after update
+            const updatedUserResponse = await axios.get("/api/v1/users/me", { 
+                withCredentials: true 
+            });
+
+            if (updatedUserResponse.status === 200) {
+                const userData = updatedUserResponse.data.data;
+                
+                // Dispatch with consistent structure
+                dispatch(login({ 
+                    userData: {
+                        data: {
+                            user: {
+                                ...userData,
+                                fullName,
+                                username
+                            }
+                        }
+                    }
+                }));
+            }
+        }
+
         navigate("/chat");
-      }
     } catch (error) {
-      console.log("Error in Updating Profile: ", error);
+        console.log("Error in Updating Profile: ", error);
     }
-  };
+};
+
 
   const handleFileInputClick = () => {
     fileInputRef.current.click();
@@ -80,14 +101,15 @@ function Profile() {
     const file = e.target.files[0];
     if (file) {
       const formData = new FormData();
-      formData.append("profile-image", file);
+      formData.append("avatar", file);
   
       try {
-        const response = await axios.post("/api/v1/users/avatar", formData, { withCredentials: true });
+        const response = await axios.post("http://localhost:8000/api/v1/users/avatar", formData, { withCredentials: true, headers: { "Content-Type": "multipart/form-data" }, });
   
         if (response.status === 200 && response.data) {
           dispatch(login({ userData: response.data }));
           console.log("Image Updated Successfully");
+          window.location.reload();
         }
   
         const reader = new FileReader();
@@ -102,25 +124,38 @@ function Profile() {
   };
   
 
-  const handleImageDelete = async (e) => {};
+  const handleDeleteImage = async () => {
+    try {
+      const response  = await axios.delete("http://localhost:8000/api/v1/users/delete-image", {withCredentials: true});
+      
+      if (response.status === 200 && response.data) {
+        dispatch(login({ userData: response.data }));
+        console.log("Image Removed Successfully");
+        window.location.reload();
+
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <div className="bg-black flex h-[100vh] items-center justify-center flex-col gap-10">
+    <div className="bg-[#E9EAEB] flex h-[100vh] items-center justify-center flex-col gap-10">
       <div className="flex flex-col gap-10 w-[80vw] md:w-max">
         <Link to="/chat">
           <div>
-            <IoArrowBack className="text-4xl lg:text-6xl text-white/90 cursor-pointer" />
+            <IoArrowBack className="text-4xl lg:text-6xl text-[#88888e] cursor-pointer" />
           </div>
         </Link>
         <div
-          className="h-full w-32 md:w-48 md:h-48 relative flex items-center justify-center"
+          className="h-full w-32 md:w-48 md:h-48 relative flex items-center self-center justify-center"
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
-          <Avatar className="h-32 w-32 md:w-48 md:h-48 rounded-full overflow-hidden">
+          <Avatar className="h-36 w-36 md:w-48 md:h-48 rounded-full overflow-hidden">
             {image ? (
               <AvatarImage
-                src={image}
+                src={`http://localhost:8000/${image}`}
                 alt="profile"
                 className="object-cover w-full h-full bg-black"
               />
@@ -139,7 +174,7 @@ function Profile() {
           {hovered && (
             <div
               className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full cursor-pointer"
-              onClick={image ? handleImageDelete : handleFileInputClick}
+              onClick={image ? handleDeleteImage : handleFileInputClick}
             >
               {image ? (
                 <FaTrash className="text-white text-3xl cursor-pointer" />
@@ -157,52 +192,42 @@ function Profile() {
             accept=".png, .jpg, .jpeg, .svg, .webp"
           />
         </div>
-        <div className="flex min-w-32 flex-col gap-5 text-white items-center justify-center">
           <div className="w-full">
+          <label className="text-[#98989e] pl-1">Email</label>
             <Input
               placeholder="Email"
               type="email"
               disabled
               value={email}
-              className="rounded-lg p-6 bg-[#2c2e3b] border-none"
+              className="rounded-lg p-6 bg-transparent border-2 border-[#D0D1DB]"
             />
           </div>
+        <div className="flex flex-col md:flex-row min-w-32 gap-5 text-black items-center justify-center">
           <div className="w-full">
+            <label className="text-[#98989e] pl-1">Fullname</label>
             <Input
               placeholder="FullName"
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="rounded-lg p-6 bg-[#2c2e3b] border-none"
+              className="rounded-lg p-6 bg-transparent border-2 border-[#D0D1DB]"
             />
           </div>
           <div className="w-full">
+            <label className="text-[#98989e] pl-1">Username</label>
             <Input
               placeholder="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="rounded-lg p-6 bg-[#2c2e3b] border-none"
+              className="rounded-lg p-6 bg-transparent border-2 border-[#D0D1DB]"
             />
-          </div>
-          <div className="w-full flex gap-5">
-            {colors.map((color, index) => (
-              <div
-                className={`${color} h-8 w-8 rounded-full cursor-pointer transition-all duration-300 ${
-                  selectedColor === index
-                    ? "outline outline-white/50 outline-3"
-                    : ""
-                }`}
-                key={index}
-                onClick={() => setSelectedColor(index)}
-              ></div>
-            ))}
           </div>
         </div>
       </div>
       <div className="w-full flex justify-center items-center">
         <Link to="/chat">
-          <Button onClick={saveChanges}>Save Changes</Button>
+          <Button onClick={saveChanges} className="bg-[#40C4FF] hover:bg-[#03A9F4]">Save Changes</Button>
         </Link>
       </div>
     </div>

@@ -1,102 +1,160 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { login } from "@/store/authSlice"
-import axios from "axios"
-import { useState } from "react"
-import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { login } from "@/store/authSlice";
+import axios from "axios";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Auth() {
-    const [identifier, setIdentifier] = useState("")
-    const [password, setPassword] = useState("")
-    const [formData, setFormData] = useState({
-        fullName: '',
-        email: '',
-        username: '',
-        password: '',
-    })
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    username: "",
+    password: "",
+  });
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
-    const navigate = useNavigate()
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-    const [message, setMessage] = useState('')
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "/api/v1/users/login",
+        { identifier, password },
+        { withCredentials: true }
+      );
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        })
-    }
-
-    const handleLogin = async(e) => {
-        e.preventDefault();
-
-        try {
-            const response = await axios.post("/api/v1/users/login", {
-                identifier,
-                password
-            }, {
-                withCredentials: true,
-            });
-            
-            dispatch(login({userData: response.data}))
-            alert('Login Successful!')
-            navigate("/chat")
-                console.log("Response Data: ", response.data);
-            } catch (error) {
-                console.error("Login Error: ", error);
-                alert("Something went wrong, please try again,");
-            }
-        }
-        
-    const handleSignUp = async(e) => {
-        try {
-            e.preventDefault();
-            const response = await axios.post("/api/v1/users/register",
-                formData,
-                {
-                    withCredentials: true,
-                }
-            );
-            setMessage(response.data.message || "User registered successfully!");
-            dispatch(login({userData: response.data}))
-            navigate("/profile")
-            console.log("Response Data: ", response.data);
+      dispatch(login({ userData: response.data }));
+      alert("Login Successful!");
+      navigate("/chat");
     } catch (error) {
-        setMessage(
-            error.response?.data?.message || "An Error Occured during registration"
-        )
-    }}
+      console.error("Login Error: ", error);
+      alert("Something went wrong, please try again.");
+    }
+  };
 
-    return (
-        <div className="h-screen w-full md:h-[100vh] md:w-[100vw] flex items-center justify-center bg-[#E5E5E5]">
-            <div className="m-5 w-full md:h-[90vh] md:w-[60vw] bg-[#DFB681] rounded-2xl flex flex-col items-center justify-center shadow-2xl border border-red-100 py-5">
-            <h1 className="font-bold text-center text-2xl md:text-7xl p-2 pt-4"><span className="text-3xl md:text-9xl font-extrabold text-red-900">C</span>ONVO<span className="md:text-9xl text-3xl text-red-900">N</span>EST</h1>
-                <div className="flex items-center justify-center w-full">
-                <Tabs className="w-3/4">
-                    <TabsList className="bg-transparent rounded-none w-full">
-                        <TabsTrigger value="login" className="data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:font-semibold data-[state=active]:border-b-black p-3 transition-all duration-300">login</TabsTrigger>
-                        <TabsTrigger value="signup" className="data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:font-semibold data-[state=active]:border-b-black p-3 transition-all duration-300">signup</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="login" className="flex flex-col gap-5">
-                        <Input type="text" placeholder="Enter your Email or username" className="bg-gray-200" value={identifier} onChange={(e) => setIdentifier(e.target.value)}/>
-                        <Input type="password" placeholder="Enter your Password" value={password} className="bg-gray-200" onChange={(e) => setPassword(e.target.value)}/>
-                        <Button onClick={handleLogin} className="rounded-full p-6">Login</Button>
-                    </TabsContent>
-                    <TabsContent value="signup" className="flex flex-col gap-5">
-                    <Input type="text" name="fullName" placeholder="Enter your Fullname" value={formData.fullName} className="bg-gray-200" onChange={handleChange}/>
-                    <Input type="email" name="email" placeholder="Enter your Email" value={formData.email} onChange={handleChange} className="bg-gray-200"/>
-                    <Input type="text" className="bg-gray-200" name="username" placeholder="Enter your Username" value={formData.username} onChange={handleChange}/>
-                    <Input type="password" name="password" className="bg-gray-200" placeholder="Enter your Password" value={formData.password} onChange={handleChange}/>
-                        <Button onClick={handleSignUp} className="rounded-full p-6">Sign Up</Button>
-                    </TabsContent>
-                </Tabs>
-                </div>
-            </div>
-        </div>        
-    )
+  const handleSignUp = async (e) => {
+    try {
+      e.preventDefault();
+      const response = await axios.post("/api/v1/users/register", formData, {
+        withCredentials: true,
+      });
+      setMessage(response.data.message || "User registered successfully!");
+      dispatch(login({ userData: response.data }));
+      navigate("/profile");
+    } catch (error) {
+      setMessage(
+        error.response?.data?.message || "An Error Occurred during registration"
+      );
+    }
+  };
+
+  return (
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-[#004AAD] to-[#40C4FF]">
+      <div className="w-full max-w-lg bg-white rounded-2xl p-8 border border-white/20">
+      <h1 className="text-center text-4xl font-bold bg-gradient-to-r from-[#40C4FF] to-[#004AAD] text-transparent bg-clip-text tracking-wide">
+          CONVONEST
+        </h1>
+
+        {/* Tabs */}
+        <Tabs className="w-full mt-6">
+          <TabsList className="flex justify-around bg-transparent border-b border-gray-300 pb-2">
+            <TabsTrigger
+              value="login"
+              className="text-lg font-semibold text-[#004AAD] tracking-wide data-[state=active]:bg-[#00BFFF] data-[state=active]:text-white w-1/2 transition-all"
+            >
+              Login
+            </TabsTrigger>
+            <TabsTrigger
+              value="signup"
+              className="text-lg font-semibold text-[#004AAD] w-1/2 tracking-wide data-[state=active]:bg-[#00BFFF] data-[state=active]:text-white transition-all"
+            >
+              Signup
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Login Form */}
+          <TabsContent value="login" className="mt-8 flex flex-col gap-5">
+            <Input
+              type="text"
+              placeholder="Email or Username"
+              className="bg-white/20 border-2 text-gray-700 placeholder-gray-300"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              className="bg-white/20 border-2 text-gray-700 placeholder-gray-300"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button
+              onClick={handleLogin}
+              className="w-full bg-[#40C4FF] text-white font-semibold py-3 rounded-lg hover:bg-[#004AAD] transition-all"
+            >
+              Login
+            </Button>
+          </TabsContent>
+
+          {/* Signup Form */}
+          <TabsContent value="signup" className="mt-1 flex flex-col gap-5">
+            <Input
+              type="text"
+              name="fullName"
+              placeholder="Full Name"
+              className="bg-white/20 border-2 text-gray-700 placeholder-gray-300"
+              value={formData.fullName}
+              onChange={handleChange}
+            />
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              className="bg-white/20 border-2 text-gray-700 placeholder-gray-300"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <Input
+              type="text"
+              name="username"
+              placeholder="Username"
+              className="bg-white/20 border-2 text-gray-700 placeholder-gray-300"
+              value={formData.username}
+              onChange={handleChange}
+            />
+            <Input
+              type="password"
+              name="password"
+              placeholder="Password"
+              className="bg-white/20 border-2 text-gray-700 placeholder-gray-300"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <Button
+              onClick={handleSignUp}
+              className="w-full bg-[#40C4FF] text-white font-semibold py-3 rounded-lg hover:bg-[#004AAD] transition-all"
+            >
+              Sign Up
+            </Button>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
 }
 
-export default Auth
+export default Auth;

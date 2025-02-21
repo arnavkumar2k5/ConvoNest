@@ -13,7 +13,20 @@ function MessageContainer() {
   const socket = useSocket();
   const dispatch = useDispatch();
   const scrollRef = useRef();
-  const userInfo = useSelector((state) => state.auth.userData?.data?.user);
+  const userInfo = useSelector((state) => {
+    const userData = state.auth.userData;
+    // First try the nested structure
+    if (userData?.data?.user) {
+        return userData.data.user;
+    }
+    // If not nested, check if userData itself is the user data
+    if (userData && typeof userData === 'object') {
+        return userData;
+    }
+    // If neither structure matches, log an error
+    console.error("Unexpected userData structure:", userData);
+    return null;
+});
   const selectedChatData = useSelector((state) => state.chat.selectedChatData);
   const selectedChatType = useSelector((state) => state.chat.selectedChatType);
   const selectedChatMessages = useSelector(
@@ -182,8 +195,8 @@ function MessageContainer() {
           <div
             className={`${
               message.sender === userInfo?._id
-                ? "bg-[#8417ff]/50 text-[#8417ff]/90 border-[#8417ff]/50"
-                : "bg-[#2a2b33]/50 text-white/80 border-[#ffffff]/20"
+                ? "bg-[#40C4FF] text-white rounded-t-2xl rounded-l-2xl text-left"
+              : "bg-[#FFFFFF] text-black rounded-t-2xl rounded-r-2xl"
             } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
           >
             {message.content}
@@ -197,8 +210,8 @@ function MessageContainer() {
         <div
           className={`${
             message.sender === userInfo?._id
-              ? "bg-[#8417ff]/50 text-[#8417ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/50 text-white/80 border-[#ffffff]/20"
+              ? "bg-[#40C4FF] text-white rounded-t-2xl rounded-l-2xl text-left"
+              : "bg-[#FFFFFF] text-black rounded-t-2xl rounded-r-2xl"
           } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
         >
           {checkIfImage(message.fileUrl) ? (
@@ -246,11 +259,11 @@ function MessageContainer() {
         <div
           className={`${
             message.sender._id === userInfo._id
-              ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50 rounded-t-2xl rounded-l-2xl text-left"
-              : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20 rounded-t-2xl rounded-r-2xl"
+              ? "bg-[#40C4FF] text-white rounded-t-2xl rounded-l-2xl text-center"
+              : "bg-[#FFFFFF] text-black rounded-t-2xl rounded-r-2xl"
           } border inline-block px-3 py-3 my-1 break-words`}
         >
-          <div className="md:max-w-[500px] md:min-w-32 max-w-64 min-w-20">
+          <div className="md:max-w-[500px] md:min-w-8 max-w-64 min-w-20">
             {message.content}
           </div>
         </div>
@@ -260,9 +273,9 @@ function MessageContainer() {
         <div
           className={`${
             message.sender._id === userInfo._id
-              ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
-          } border inline-block overflow-hidden rounded-2xl my-1 max-w-[50%] break-words`}
+              ? "bg-[#40C4FF] text-white rounded-t-2xl rounded-l-2xl text-left"
+              : "bg-[#FFFFFF] text-black rounded-t-2xl rounded-r-2xl"
+          } border inline-block p-4 overflow-hidden rounded-2xl my-1 max-w-[50%] break-words`}
         >
           {checkIfImage(message.fileUrl) ? (
             <div
@@ -317,15 +330,15 @@ function MessageContainer() {
                   : message.sender.email?.charAt(0)}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm text-white/60">
-            {`${message.sender.fullName} ${message.sender.username}`}
+          <span className="text-sm text-gray-600">
+            <span className="uppercase">{message.sender.fullName}</span> <span className="text-xs">({message.sender.username})</span>
           </span>
-          <span className="text-sm text-white/60">
+          <span className="text-sm text-gray-600">
             {moment(message.updatedAt).format("LT")}
           </span>
         </div>
       ) : (
-        <div className="text-sm text-white/60 mt-1">
+        <div className="text-sm text-gray-600 mt-1">
           {moment(message.updatedAt).format("LT")}
         </div>
       )}
@@ -333,7 +346,7 @@ function MessageContainer() {
   );
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-hidden p-4 px-8 md:w-[65vw] lg:w-[70w] xl:w-[80vw] w-full">
+    <div className="flex-1 overflow-y-auto scrollbar-hidden p-4 px-8 md:w-[65vw] lg:w-[70w] xl:w-[80vw] w-full bg-[#E9EAEB]">
       {renderMessages()}
       <div ref={scrollRef} />
       

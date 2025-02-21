@@ -66,10 +66,10 @@ function ContactsContainer() {
     getChannels();
   }, [setDirectMessagesContact, setChannels]);
   return (
-    <div className="w-full md:w-[20%] flex flex-col bg-[#121212] text-white h-screen">
-      <h1 className="font-bold text-center text-xl p-2 pt-4"><span className="text-3xl font-extrabold text-red-900">C</span>ONVO<span className="text-3xl text-red-900">N</span>EST</h1>
+    <div className="w-full md:w-[20%] flex flex-col bg-[#EFF6FC] text-black h-screen p-5 md:p-2">
+      <h1 className="font-extrabold text-center text-2xl text-[#1565C0] p-2 pt-4" style={{fontFamily: "cursive"}}><span className="text-4xl font-extrabold">C</span>ONVO<span className="text-4xl">N</span>EST</h1>
       <div className="my-5">
-        <div className="flex items-center justify-between pr-10">
+        <div className="flex items-center justify-between pr-10 border-t-2 pt-2">
           <Title text="Direct Messages" />
           <NewDm />
         </div>
@@ -79,7 +79,7 @@ function ContactsContainer() {
       </div>
       <div className="">
         <div className="flex flex-col">
-        <div className="flex items-center justify-between pr-10">
+        <div className="flex items-center justify-between pr-10 border-t-2 pt-2">
           <Title text="Channels" />
           <CreateChannel/>
           </div>
@@ -99,7 +99,7 @@ export default ContactsContainer;
 
 const Title = ({ text }) => {
   return (
-    <h6 className="uppercase tracking-widest text-neutral-400 pl-10 font-extrabold text-opacity-90 text-sm pb-2">
+    <h6 className="uppercase tracking-widest text-[#1565C0] pl-10 font-bold text-opacity-90 text-lg pt-2">
       {text}
     </h6>
   );

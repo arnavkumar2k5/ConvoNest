@@ -37,10 +37,10 @@ function ContactList({ isChannel = false }) {
         if (isChannel) {
             return (
                 <>
-                    <div className='bg-[#ffffff22] h-10 w-10 flex items-center justify-center rounded-full'>
+                    <div className='bg-[#E9EAEB] h-10 w-10 flex items-center justify-center rounded-full'>
                         #
                     </div>
-                    <span>{contact.name || 'Unnamed Channel'}</span>
+                    <span className='uppercase'>{contact.name || 'Unnamed Channel'}</span>
                 </>
             );
         }
@@ -69,7 +69,7 @@ function ContactList({ isChannel = false }) {
                     )}
                 </Avatar>
                 <span>
-                    {`${contact.fullName || 'Unknown'} ${contact.username || ''}`}
+                    <span className='uppercase'>{contact.fullName || 'Unknown'}</span> <span className='text-sm'>({contact.username || ''})</span>
                 </span>
             </div>
         );
@@ -84,19 +84,19 @@ function ContactList({ isChannel = false }) {
                             key={contact._id}
                             className={`pl-2 rounded-lg py-2 transition-all duration-300 cursor-pointer ${
                                 selectedChatData && selectedChatData._id === contact._id
-                                    ? "bg-[#8417ff] hover:bg-[#8417ff]"
+                                    ? "bg-[#40C4FF] hover:bg-[#40C4FF]"
                                     : "hover:bg-[#f1f1f111]"
                             }`}
                             onClick={() => handleClick(contact)}
                         >
-                            <div className='flex gap-5 items-center text-neutral-300'>
+                            <div className='flex gap-5 items-center text-black'>
                                 {renderContactContent(contact)}
                             </div>
                         </div>
                     )
                 )).filter(Boolean)
             ) : (
-                <div className="text-center text-gray-500 mt-4">
+                <div className="text-center text-black mt-4">
                     {isChannel ? 'No channels available' : 'No contacts available'}
                 </div>
             )}

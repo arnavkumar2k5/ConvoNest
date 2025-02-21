@@ -11,7 +11,9 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
     const socket = useRef();
-    const userInfo = useSelector((state) => state.auth.userData?.data?.user);
+    const userInfo = useSelector((state) => 
+        state.auth.userData?.data?.user || state.auth.userData
+    );
     const selectedChatData = useSelector((state) => state.chat.selectedChatData);
     const selectedChatType = useSelector((state) => state.chat.selectedChatType);
     const dispatch = useDispatch();

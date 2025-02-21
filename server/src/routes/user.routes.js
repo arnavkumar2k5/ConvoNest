@@ -1,5 +1,5 @@
 import multer from "multer";
-import { registerUser, loginUser, logoutUser, allUsers, updateUser, updateUserAvatar, getUserProfile } from "../controllers/user.controllers.js";
+import { registerUser, loginUser, logoutUser, allUsers, updateUser, updateUserAvatar, getUserProfile, removeProfileImage } from "../controllers/user.controllers.js";
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -14,6 +14,7 @@ router.route("/user").get(verifyJWT, allUsers);
 router.route("/me").get(verifyJWT, getUserProfile);
 router.route("/update-account").patch(verifyJWT, updateUser);
 
-router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
+router.route("/avatar").post(verifyJWT, upload.single("avatar"), updateUserAvatar);
+router.route("/delete-image").delete(verifyJWT, removeProfileImage);
 
 export default router;

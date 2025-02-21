@@ -21,6 +21,8 @@ const AuthSlice = createSlice({
     initialState,
     reducers: {
         login: (state, action) => {
+            console.log("Redux Login Payload:", action.payload);
+
             state.status = true;
             state.userData = action.payload.userData;
             Cookies.set("userData", JSON.stringify(action.payload.userData), { expires: 1 });

@@ -13,7 +13,21 @@ function MessageBar() {
     const socket = useSocket();
     const [message, setMessage] = useState("");
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
-    const userInfo = useSelector((state) => state.auth.userData?.data?.user);
+    const userInfo = useSelector((state) => {
+        const userData = state.auth.userData;
+        // First try the nested structure
+        if (userData?.data?.user) {
+            return userData.data.user;
+        }
+        // If not nested, check if userData itself is the user data
+        if (userData && typeof userData === 'object') {
+            return userData;
+        }
+        // If neither structure matches, log an error
+        console.error("Unexpected userData structure:", userData);
+        return null;
+    });
+    console.log("oo bhai yeh aaya hai:- ", useSelector((state) => state.auth.userData?.data?.user));
     const selectedChatData = useSelector((state) => state.chat.selectedChatData);
     const selectedChatType = useSelector((state) => state.chat.selectedChatType);
     const dispatch = useDispatch()
@@ -143,11 +157,11 @@ function MessageBar() {
     
 
     return (
-        <div className='h-[10vh] bg-[#121212] flex justify-center items-center px-8 mb-6 gap-2'>
-            <div className='flex md:flex-1 bg-[#2a2b33] rounded-md items-center gap-2 pr-2'>
+        <div className='h-[10vh] flex justify-center items-center px-8 my-2 gap-2'>
+            <div className='flex md:flex-1 border-2 border-[#E9EAEB] rounded-md items-center gap-2 pr-2'>
                 <input 
                     type="text" 
-                    className='flex-1 p-5 bg-transparent rounded-md focus:border-none focus-outline-none' 
+                    className='flex-1 p-5 bg-transparent text-black rounded-md border-none outline-none' 
                     placeholder='Enter Message' 
                     value={message} 
                     onChange={(e) => setMessage(e.target.value)}
@@ -173,7 +187,7 @@ function MessageBar() {
                 </div>
             </div>
             <button 
-                className='bg-[#8417ff] rounded-md flex items-center justify-center p-5 focus:border-none hover:bg-[#741bda] focus:bg-[#741bda] focus:outline-none focus:text-white duration-300 transition-all' 
+                className='bg-[#40C4FF] rounded-md flex items-center justify-center p-5 focus:border-none hover:bg-[#03A9F4] focus:bg-[#03A9F4] focus:outline-none focus:text-white duration-300 transition-all' 
                 onClick={handleSendMessage}
             >
                 <IoSend className='text-2xl'/>

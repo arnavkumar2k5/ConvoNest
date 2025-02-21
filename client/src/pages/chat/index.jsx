@@ -7,27 +7,22 @@ import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode
 
 function Chat() {
-  const userInfo = useSelector((state) => state.auth.userData?.data);
+  const userInfo = useSelector((state) => {
+    const userData = state.auth.userData;
+    return userData?.data?.user || userData;
+  });
   const selectChatType = useSelector((state) => state.chat.selectedChatType);
   const navigate = useNavigate();
 
-  console.log("bhai aa gaye", userInfo);
-
-  let decodedUser = null;
-  if (userInfo?.accessToken) {
-    try {
-      decodedUser = jwtDecode(userInfo.accessToken);
-    } catch (error) {
-      console.error("Token decoding error:", error);
-    }
-  }
+  console.log("User Info in Chat:", userInfo);
 
   useEffect(() => {
-    if (userInfo && (!decodedUser || !decodedUser.fullName)) {
+    // Check if userInfo exists and if it has the required profile fields
+    if (userInfo && (!userInfo.fullName || !userInfo.username)) {
       alert("Please Setup User profile");
       navigate("/profile");
     }
-  }, [userInfo, decodedUser, navigate]);
+  }, [userInfo, navigate]);
 
   return (
     <div className="flex text-white overflow-hidden">
