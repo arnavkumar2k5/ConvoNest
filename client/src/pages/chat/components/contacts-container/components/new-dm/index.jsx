@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { animationDefaultOptions, getColor } from '@/lib/utils';
 import { addDirectMessageContact, setSelectedChatData, setSelectedChatType } from '@/store/chatSlice';
 import axios from 'axios';
+import { Plus } from 'lucide-react';
 import React, { useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import Lottie from 'react-lottie';
@@ -47,8 +48,8 @@ function NewDm() {
         <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <FaPlus
-                  className="text-neutral-400 font-light text-opacity-90 text-start hover:text-neutral-100 cursor-pointer transition-all duration-300"
+                <Plus
+                  size={20} className="cursor-pointer mt-2"
                   onClick={() => setOpenNewContactModal(true)}
                 />
               </TooltipTrigger>
@@ -72,7 +73,7 @@ function NewDm() {
                   <div>
                     {
                       searchedContacts.map((contact) => (
-                        <div key={contact._id} className='flex gap-3 items-center cursor-pointer' onClick={() => selectNewContact(contact)}>
+                        <div key={contact._id} className='flex gap-3 items-center cursor-pointer mb-2' onClick={() => selectNewContact(contact)}>
                           <div className="w-12 h-12 relative">
                                   <Avatar className="h-12 w-12 rounded-full overflow-hidden">
                                     {contact.image ? (
@@ -115,7 +116,7 @@ function NewDm() {
 
                 <div className='text-opacity-80 text-white flex flex-col items-center mt-5 gap-5 lg:text-2xl text-xl transition-all duration-300 text-center'>
                     <h3 className='poppins-medium'>
-                        Hi<span className='text-purple-500'>!</span> Search New <span className='text-purple-500 '>Contacts</span>
+                        Hi<span className='text-[#00BFFF]'>!</span> Search New <span className='text-[#00BFFF] '>Contacts</span>
                     </h3>
                 </div>
             </div>

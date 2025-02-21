@@ -74,7 +74,7 @@ function ProfileInfo() {
           )}
         </Avatar>
         </div>
-        <div>{fullName}</div>
+        <div className="uppercase text-white font-bold">{fullName}</div>
         <div>
           <TooltipProvider>
             <Tooltip>

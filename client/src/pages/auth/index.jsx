@@ -63,18 +63,17 @@ function Auth() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-[#004AAD] to-[#40C4FF]">
+    <div className="h-screen px-2 md:px-0 flex items-center justify-center bg-gradient-to-br from-[#004AAD] to-[#40C4FF]">
       <div className="w-full max-w-lg bg-white rounded-2xl p-8 border border-white/20">
       <h1 className="text-center text-4xl font-bold bg-gradient-to-r from-[#40C4FF] to-[#004AAD] text-transparent bg-clip-text tracking-wide">
           CONVONEST
         </h1>
 
-        {/* Tabs */}
         <Tabs className="w-full mt-6">
           <TabsList className="flex justify-around bg-transparent border-b border-gray-300 pb-2">
             <TabsTrigger
               value="login"
-              className="text-lg font-semibold text-[#004AAD] tracking-wide data-[state=active]:bg-[#00BFFF] data-[state=active]:text-white w-1/2 transition-all"
+              className="text-lg font-bold text-[#004AAD] tracking-wide data-[state=active]:bg-[#00BFFF] data-[state=active]:text-white w-1/2 transition-all"
             >
               Login
             </TabsTrigger>
@@ -86,7 +85,6 @@ function Auth() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Login Form */}
           <TabsContent value="login" className="mt-8 flex flex-col gap-5">
             <Input
               type="text"

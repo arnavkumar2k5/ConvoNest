@@ -67,7 +67,6 @@ export default function CreateChannel() {
                     setchannelName("");
                     setselectedContacts([]);
                     setNewChannelModal(false);
-                    // Add this line to reload the page
                     window.location.reload();
                 }
             }
@@ -90,7 +89,7 @@ export default function CreateChannel() {
       </TooltipProvider>
 
       <Dialog open={newChannelModal} onOpenChange={setNewChannelModal}>
-  <DialogContent className="bg-[#181920] border-none text-white md:w-[400px] w-[350px] rounded-lg h-[400px] flex flex-col  ">
+  <DialogContent className="bg-[#181920] border-none text-white md:w-[400px] w-[350px] rounded-lg h-[300px] hover:h-[500px] flex flex-col  ">
     <DialogHeader>
       <DialogTitle>Please fill up the details for new channel</DialogTitle>
       <DialogDescription></DialogDescription>
@@ -116,7 +115,7 @@ export default function CreateChannel() {
         />
     </div>
     <div>
-        <Button className="w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300 "
+        <Button className="w-full bg-[#00BFFF] hover:bg-blue-900 transition-all duration-300 "
         onClick={createChannel}
         >
         Create Channel
