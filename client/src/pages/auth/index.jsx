@@ -6,6 +6,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CustomCursor from "../Landing/Cursor";
+import { IoArrowBack } from "react-icons/io5";
 
 function Auth() {
   const [identifier, setIdentifier] = useState("");
@@ -64,22 +66,23 @@ function Auth() {
 
   return (
     <div className="h-screen px-2 md:px-0 flex items-center justify-center bg-gradient-to-br from-[#004AAD] to-[#40C4FF]">
+      <CustomCursor/>
       <div className="w-full max-w-lg bg-white rounded-2xl p-8 border border-white/20">
       <h1 className="text-center text-4xl font-bold bg-gradient-to-r from-[#40C4FF] to-[#004AAD] text-transparent bg-clip-text tracking-wide">
           CONVONEST
         </h1>
 
-        <Tabs className="w-full mt-6">
+        <Tabs className="w-full mt-6" defaultValue="login">
           <TabsList className="flex justify-around bg-transparent border-b border-gray-300 pb-2">
             <TabsTrigger
               value="login"
-              className="text-lg font-bold text-[#004AAD] tracking-wide data-[state=active]:bg-[#00BFFF] data-[state=active]:text-white w-1/2 transition-all"
+              className="text-lg font-bold text-gray-600 uppercase tracking-wide data-[state=active]:bg-[#00BFFF] data-[state=active]:text-white w-1/2 transition-all"
             >
               Login
             </TabsTrigger>
             <TabsTrigger
               value="signup"
-              className="text-lg font-semibold text-[#004AAD] w-1/2 tracking-wide data-[state=active]:bg-[#00BFFF] data-[state=active]:text-white transition-all"
+              className="text-lg font-bold text-gray-600 uppercase w-1/2 tracking-wide data-[state=active]:bg-[#00BFFF] data-[state=active]:text-white transition-all"
             >
               Signup
             </TabsTrigger>
@@ -108,7 +111,6 @@ function Auth() {
             </Button>
           </TabsContent>
 
-          {/* Signup Form */}
           <TabsContent value="signup" className="mt-1 flex flex-col gap-5">
             <Input
               type="text"
@@ -149,6 +151,10 @@ function Auth() {
               Sign Up
             </Button>
           </TabsContent>
+          <span onClick={() => navigate("/")} className="mt-2 cursor-pointer flex items-center justify-center text-md font-semibold text-gray-600 gap-1">
+            <IoArrowBack/>
+            Go Back
+            </span>
         </Tabs>
       </div>
     </div>

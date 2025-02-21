@@ -3,13 +3,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import Load from '@/lib/load';
 import { animationDefaultOptions, getColor } from '@/lib/utils';
 import { addDirectMessageContact, setSelectedChatData, setSelectedChatType } from '@/store/chatSlice';
 import axios from 'axios';
 import { Plus } from 'lucide-react';
 import React, { useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
-import Lottie from 'react-lottie';
 import { useDispatch } from 'react-redux';
 
 function NewDm() {
@@ -107,12 +106,7 @@ function NewDm() {
             }
             {
                 searchedContacts.length <=0 && <div className='md:flex flex-1 h-screen md:bg-[#1c1d25] md:flex-col justify-center items-center'>
-                <Lottie
-                isClickToPauseDisabled={true}
-                height={100}
-                width={100}
-                options={animationDefaultOptions}
-                />
+                <Load/>
 
                 <div className='text-opacity-80 text-white flex flex-col items-center mt-5 gap-5 lg:text-2xl text-xl transition-all duration-300 text-center'>
                     <h3 className='poppins-medium'>
